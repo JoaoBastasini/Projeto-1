@@ -1,3 +1,36 @@
+@font-face {
+    font-family: "pokemon_simples";
+    src: url('fontes/fonte_corpo/pokemon_jogo.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: "pokemon_titulo";
+    src: url('fontes/fonte_titulo/pokemon_solid.ttf') format('truetype');
+}
+
+body{
+    font-family: "pokemon_simples";
+    background: linear-gradient(to bottom, rgb(20, 145, 222), white);
+}
+
+h1{
+    font-family: "pokemon_titulo";
+    color: rgb(249, 231, 29);
+    font-size: 80px;
+    text-align: center;
+    text-shadow: 
+    3px 3px 1px #000,
+    -3px -3px 1px #000,
+    3px -3px 1px #000,
+    -3px 3px 1px #000;
+}
+
+.img_centralizada{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .botao_minijogo{
     background-color: yellow;
     color: darkgoldenrod;
@@ -6,4 +39,12 @@
     text-decoration: none;
     text-align: center;
     padding: 10px 15px; /* Adiciona espaço dentro do botão, Vertical + Lateral */
+    margin: 5px 10px; /* Adiciona espaçõ entre o botão e outras coisas, Vertical + Lateral */
+
+    cursor: pointer; /* Faz com que o cursor mude para o "dá para clicar" */
+    transition: background-color 0.2s ease; /* Faz com que a "hover" aconteça gradualmente */
+}
+
+.botao_minijogo:hover {
+    background-color: lightyellow; /* Muda a cor do fundo quando coloca o cursor */
 }
