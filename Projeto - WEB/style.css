@@ -1,0 +1,9 @@
+.botao_minijogo{
+    background-color: yellow;
+    color: darkgoldenrod;
+    border: 1px solid black; /* Espessura + Tipo da borda + Cor */
+    border-radius: 8px; /* Arredonda a borda */
+    text-decoration: none;
+    text-align: center;
+    padding: 10px 15px; /* Adiciona espaço dentro do botão, Vertical + Lateral */
+}
