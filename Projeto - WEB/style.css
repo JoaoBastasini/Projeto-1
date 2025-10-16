@@ -19,10 +19,10 @@ h1{
     font-size: 80px;
     text-align: center;
     text-shadow: 
-    3px 3px 1px #000,
-    -3px -3px 1px #000,
-    3px -3px 1px #000,
-    -3px 3px 1px #000;
+    4px 4px 2px #000,
+    -4px -4px 2px #000,
+    4px -4px 2px #000,
+    -4px 4px 2px #000;
 }
 
 .img_centralizada{
