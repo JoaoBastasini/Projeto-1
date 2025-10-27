@@ -4,13 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
-    <title>Pokélearn</title>
+    <title>POKÉLEARN</title>
 </head>
 <body>
-    <h1>POKÉLEARN</h1>
+
+    <svg class=svg_centralizado width="400" height="150" viewBox="0 0 450 200">
+        <defs>
+            <path id="img_curvada" d="M 10,180 Q 225,20 440,180" /> 
+        </defs>
+
+        <text class=img_titulo>
+            <textPath href="#img_curvada" startOffset="50%" textLength="440" lengthAdjust="spacingAndGlyphs">
+            POKÉLEARN
+            </textPath>
+        </text>
+    </svg>
+
     <img class="img_centralizada" src='imagens/pokeball-pokemon-svgrepo-com.svg' 
-        alt="Uma Pokébola Aberta" style="width:800px;height:300px;">
+        alt="Uma Pokébola" style="width:800px;height:300px;">
     <h3>Aprenda matemática de forma divertida</h3>
-    <a href="minijogos/minijogo1.html" class="botao_minijogo">Minijogo 1</a>
-</body>
+    <a href="minijogos/calculo_dano.html" class="botao_minijogo">Minijogo 1</a>
+</body> 
 </html>

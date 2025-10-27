@@ -8,13 +8,18 @@
     src: url('fontes/fonte_titulo/pokemon_solid.ttf') format('truetype');
 }
 
+html{
+    height: 100%; /* Aplica as coisas na página visível toda, não apenas até onde tem coisa escrita*/
+}
+
 body{
     font-family: "pokemon_simples";
     background: linear-gradient(to bottom, rgb(20, 145, 222), white);
+    min-width: 100%; /* Aplica as coisas na página visível toda, não apenas até onde tem coisa escrita*/
 }
 
 h1{
-    font-family: "pokemon_titulo";
+    font-family: "pokemon_titulo", sans-serif;
     color: rgb(249, 231, 29);
     font-size: 80px;
     text-align: center;
@@ -30,6 +35,34 @@ h1{
     margin-left: auto;
     margin-right: auto;
 }
+
+.svg_centralizado {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#img_curvada {
+    stroke: transparent; /* Sem borda */
+    fill: none
+  }
+
+.img_titulo{
+    /* Características de Fonte */
+    font-family: "pokemon_titulo", sans-serif;
+    font-size: 80px;
+    
+    fill: rgb(249, 231, 29);
+    
+    text-shadow: 
+        4px 4px 2px #000,
+        -4px -4px 2px #000,
+        4px -4px 2px #000,
+        -4px 4px 2px #000;
+        
+    text-anchor: middle; 
+}
+
 
 .botao_minijogo{
     background-color: yellow;
