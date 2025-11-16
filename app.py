@@ -244,4 +244,5 @@ def iniciar_calculo():
 # --- 4. Inicialização do Servidor ---
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # use_reloader False para evitar carregar o CSV duas vezes durante o desenvolvimento
+    app.run(debug=True, use_reloader=False)
