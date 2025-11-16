@@ -3,7 +3,14 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../static/style.css">
+
+    <!-- 
+    Chaves duplas são usadas para indicar que é código Jinja2 (template engine do Flask)
+    Executa Python/Flask antes de enviar o HTML para o navegador
+    Flask usa url_for para gerar URLs para arquivos estáticos
+    Garante que o caminho está correto independentemente de onde o app está rodando
+    -->   
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>POKÉLEARN</title>
 </head>
 <body>
@@ -25,16 +32,11 @@
         </text>
     </svg>
 
-    <!-- 
-    {{ }} é usado para indicar que é código Jinja2 (template engine do Flask)
-    Executa Python/Flask antes de enviar o HTML para o navegador
-    Flask usa url_for para gerar URLs para arquivos estáticos
-    Garante que o caminho está correto independentemente de onde o app está rodando
-    -->   
+    
     <img class="img_centralizada" src="{{ url_for('static', filename='imagens/pokeball-pokemon-svgrepo-com.svg') }}" 
         alt="Uma Pokébola" style="width:800px;height:300px;">
     <h3>Aprenda matemática de forma divertida</h3>
-    <a href="{{ url_for('static', filename='minijogos/calculo_dano.html') }}" class="botao_minijogo">Calcular Dano!</a>
-    <a href="{{ url_for('static', filename='minijogos/calculo_xp.html') }}" class="botao_minijogo">Calcular XP!</a>
+    <a href="{{ url_for('calculo_dano_page') }}" class="botao_minijogo">Calcular Dano!</a>
+    <a href="{{ url_for('calculo_xp_page') }}" class="botao_minijogo">Calcular XP!</a>
 </body> 
 </html>
