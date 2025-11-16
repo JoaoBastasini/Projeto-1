@@ -22,66 +22,6 @@
         </text>
     </svg>
 
-    <!--
-<h2>Calculadora de Dano (Exemplo Simplificado)</h2>
 
-<form id="formDano">
-    <label for="ataque">Ataque do Atacante (ATK/Sp. ATK):</label>
-    <input type="number" id="ataque" name="ataque" value="100" required><br><br>
-
-    <label for="defesa">Defesa do Defensor (DEF/Sp. DEF):</label>
-    <input type="number" id="defesa" name="defesa" value="100" required><br><br>
-    
-    <label for="potencia">Potência do Golpe:</label>
-    <input type="number" id="potencia" name="potencia" value="90" required><br><br>
-    
-    <label for="modificador">Modificador (STAB, Efetividade, Crítico - Ex: 1.5, 2.0, 0.5):</label>
-    <input type="number" step="0.1" id="modificador" name="modificador" value="1.5" required><br><br>
-
-    <button type="submit" class="botao_minijogo">Calcular!</button>
-</form>
-
-<h3 id="resultadoDano"></h3>
-
-    <script>
-        document.getElementById('formDano').addEventListener('submit', function(e) {
-            e.preventDefault(); // Impede o recarregamento padrão da página
-
-            // 1. Coleta os dados do formulário
-            const dados = {
-                ataque: parseFloat(document.getElementById('ataque').value),
-                defesa: parseFloat(document.getElementById('defesa').value),
-                potencia: parseFloat(document.getElementById('potencia').value),
-                modificador: parseFloat(document.getElementById('modificador').value)
-            };
-
-            // 2. Envia os dados para a rota do Flask
-            fetch('/api/calcular_dano', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(dados)
-            })
-            .then(response => response.json())
-            .then(data => {
-                // 3. Processa e exibe o resultado
-                const resultado = document.getElementById('resultadoDano');
-                if (data.sucesso) {
-                    resultado.innerHTML = `O dano calculado é: <strong>${data.dano_calculado}</strong> HP.`;
-                    resultado.style.color = 'darkgreen';
-                } else {
-                    resultado.innerHTML = `Erro no cálculo: ${data.erro}`;
-                    resultado.style.color = 'red';
-                }
-            })
-            .catch((error) => {
-                console.error('Erro de rede/servidor:', error);
-                document.getElementById('resultadoDano').innerHTML = 'Ocorreu um erro de comunicação.';
-                document.getElementById('resultadoDano').style.color = 'red';
-            });
-        });
-    </script>
-    -->
 
 </body>
