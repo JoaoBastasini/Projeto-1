@@ -168,7 +168,7 @@ def get_challenge_formula(params, nivel_dificuldade):
                 "Eficácia": params['type_effectiveness']
             },
             # params['damage_max'] é o dano exato com fator 1.0
-            "answer_for_level": params['damage_max']
+            "answer_for_level": params['range_max']
         }
     
     # NÍVEL DIFÍCIL --> resultado deve ser a faixa completa de dano (0.85 a 1.0)

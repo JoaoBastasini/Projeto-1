@@ -3,10 +3,12 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <!-- LaTex para fórmula de dano -->
+    
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
     <script src="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.18/dist/katex.min.css">
+    
     <title>Cálculo de dano</title>
 </head>
 <body>
@@ -15,7 +17,6 @@
         <defs>
             <path id="img_curvada" d="M 10,180 Q 250,20 490,180" /> 
         </defs>
-
         <text class="img_titulo">
             <textPath href="#img_curvada" startOffset="50%" textLength="480" lengthAdjust="spacingAndGlyphs">
             Cálculo de Dano
@@ -41,7 +42,7 @@
                     <div>
                         <p><strong>⚔️ ATACANTE:</strong> <span id="attacker_name"></span> (Nível <span id="level"></span>)</p>
                         <p><strong>Tipos:</strong> <span id="attacker_types"></span></p>
-                        <p class="item_stats"><strong><span id="att_stat_name"></span>:</strong> <span id="atk_value"></span></p>
+                        <p class="item_stats"><strong><span id="att_stat_name"></span>:</strong> <span id="att_value"></span></p>
                     </div>
                     <div>
                         <p><strong>🛡️ DEFENSOR:</strong> <span id="defender_name"></span></p>
@@ -79,72 +80,85 @@
     </div>
 
     <script>
-        let currentLevel = null;
-        let correctAnswer = null;
-        let correctRangeMin = null;
-        let correctRangeMax = null;
+        // Variáveis globais para armazenar o estado do jogo
+        let currentLevel = null; // Nível atual ('facil', 'medio', 'dificil')
+        let correctAnswer = null; // Resposta correta (para Fácil/Médio)
+        let correctRangeMin = null; // Mínimo da faixa de dano (para Difícil)
+        let correctRangeMax = null; // Máximo da faixa de dano (para Difícil)
 
 
+        // =======================================================
+        // FUNÇÃO: startChallenge(nivel)
+        // Inicia um novo desafio, buscando os dados no backend (Flask).
+        // =======================================================
         function startChallenge(nivel) {
             currentLevel = nivel;
             
+            // 1. Resetar a interface e mostrar a área do desafio
             document.getElementById('challenge_area').style.display = 'block';
             document.getElementById('result_message').style.display = 'none';
             document.getElementById('user_answer').value = '';
             document.getElementById('new_challenge_btn').style.display = 'none';
             document.getElementById('formula_warning').innerHTML = '';
             
+            // 2. Chamada AJAX (Fetch API) para o endpoint do Flask
             fetch('/api/iniciar_calculo', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                // Envia o nível de dificuldade escolhido
                 body: JSON.stringify({ nivel: nivel })
             })
+            // 3. Processa a resposta JSON do Flask
             .then(response => response.json())
             .then(data => {
-                if (data.erro) {
+                if (data.erro) { // Verifica se há erro no carregamento dos dados
                     alert(data.erro);
                     return;
                 }
 
+                // 4. Armazena as respostas corretas nas variáveis globais
                 correctAnswer = data.formula.answer_for_level;
                 correctRangeMin = data.formula.range_min;
                 correctRangeMax = data.formula.range_max;
 
+                // 5. Preenche os campos do HTML com os dados da batalha
                 document.getElementById('level_name').textContent = data.formula.name;
                 document.getElementById('level_name_formula').textContent = data.formula.name;
-                document.getElementById('level_description').textContent = data.formula.description;
+                document.getElementById('level_description').textContent = data.formula.description; // Nova descrição do nível
                 
                 document.getElementById('attacker_name').textContent = data.battle.attacker;
                 document.getElementById('defender_name').textContent = data.battle.defender;
                 document.getElementById('level').textContent = data.battle.level;
-                
+                // ... preenchimento dos demais campos (tipos, stats, poder, stab, eficácia) ...
                 document.getElementById('attacker_types').textContent = data.battle.attacker_types;
                 document.getElementById('defender_types').textContent = data.battle.defender_types;
-                
                 document.getElementById('att_stat_name').textContent = data.battle.att_stat_name;
                 document.getElementById('att_value').textContent = data.battle.att_value;
                 document.getElementById('def_stat_name').textContent = data.battle.def_stat_name;
                 document.getElementById('def_value').textContent = data.battle.def_value;
-                
                 document.getElementById('attack_type').textContent = data.battle.attack_type;
                 document.getElementById('power').textContent = data.battle.power;
                 document.getElementById('stab_mod').textContent = data.battle.stab_mod;
                 document.getElementById('type_effectiveness').textContent = data.battle.type_effectiveness;
 
 
+                // 6. Renderiza a fórmula LaTeX usando KaTeX
                 const formulaElement = document.getElementById('formula_equation');
                 katex.render(data.formula.equation_tex, formulaElement, {
-                    throwOnError: false
+                    throwOnError: false // Não quebra se houver erro de sintaxe LaTeX
                 });
 
 
+                // 7. Preenche os valores numéricos a serem substituídos na fórmula
                 let valuesHtml = 'Valores a Substituir: ';
                 const values = data.formula.values;
+                // Mapeia o dicionário de valores para strings formatadas (Ex: 'Nível = 50 | Poder = 80')
                 valuesHtml += Object.keys(values).map(key => `<strong>${key}</strong> = ${values[key]}`).join(' | ');
                 document.getElementById('formula_values').innerHTML = valuesHtml;
 
+                // 8. Define avisos específicos de arredondamento ou faixa de dano
                 if (nivel === 'medio') {
                     document.getElementById('formula_warning').innerHTML = 'Lembre-se: Arredonde para baixo o valor final! (Função $\\lfloor x \\rfloor$)';
                 } else if (nivel === 'dificil') {
@@ -159,6 +173,10 @@
         }
 
 
+        // =======================================================
+        // FUNÇÃO: checkAnswer()
+        // Verifica a resposta do usuário contra a resposta correta.
+        // =======================================================
         function checkAnswer() {
             const userAnswer = document.getElementById('user_answer').value.trim();
             const resultMessage = document.getElementById('result_message');
@@ -166,35 +184,45 @@
             
             let isCorrect = false;
 
+            // Lógica para Nível DIFÍCIL (espera formato Min-Max)
             if (currentLevel === 'dificil') {
+                // Divide a string do usuário em dois números (ex: "42-50" -> ["42", "50"])
                 const parts = userAnswer.split('-').map(p => p.trim());
                 if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
                     const userMin = parseInt(parts[0]);
                     const userMax = parseInt(parts[1]);
-
+                    // Compara se a faixa inserida é igual à faixa correta
                     if (userMin === correctRangeMin && userMax === correctRangeMax) {
                         isCorrect = true;
                     }
                 }
-            } else {
+            } 
+            // Lógica para Nível FÁCIL e MÉDIO (espera um único número)
+            else {
                 const userNumber = parseInt(userAnswer);
+                // Compara se o número inserido (inteiro) é igual à resposta correta
                 if (!isNaN(userNumber) && userNumber === correctAnswer) {
                     isCorrect = true;
                 }
             }
             
+            // 1. Exibir resultado e botão de novo desafio
             resultMessage.style.display = 'block';
             newChallengeBtn.style.display = 'block';
 
+            // 2. Aplicar estilos e exibir mensagem
             if (isCorrect) {
-                resultMessage.className = 'resultado_box correto';
-                resultMessage.innerHTML = `Correto! O dano final é: <strong>${correctAnswer}</strong>.`;
+                resultMessage.className = 'resultado_box correto'; // Aplica classe de sucesso (verde)
+                resultMessage.innerHTML = `✅ Correto! O dano final é: <strong>${correctAnswer}</strong>.`;
             } else {
-                resultMessage.className = 'resultado_box incorreto';
+                resultMessage.className = 'resultado_box incorreto'; // Aplica classe de erro (vermelho)
+                // Formata a resposta correta para ser exibida
                 let correctDisplay = currentLevel === 'dificil' ? `[${correctRangeMin} - ${correctRangeMax}]` : correctAnswer;
-                resultMessage.innerHTML = `Incorreto! A resposta correta era: <strong>${correctDisplay}</strong>.`;
+                resultMessage.innerHTML = `❌ Incorreto! A resposta correta era: <strong>${correctDisplay}</strong>.`;
                 
+                // Opção para dar uma dica extra nos níveis Médio/Difícil
                 if (currentLevel === 'medio' || currentLevel === 'dificil') {
+                    // Chamada separada para buscar o valor base (após a falha), se necessário
                     fetch('/api/iniciar_calculo', { 
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
@@ -202,10 +230,12 @@
                     })
                     .then(r => r.json())
                     .then(data => {
-                        resultMessage.innerHTML += `<br>O valor base (antes de STAB/Eficácia) é aproximadamente: <strong>${data.base_calc_no_random}</strong>.`;
+                        // Exibe o valor do cálculo Base (antes de aplicar STAB/Eficácia/Aleatório)
+                        resultMessage.innerHTML += `<br>Dica: O valor base (antes de STAB/Eficácia) é aprox.: <strong>${data.base_calc_no_random}</strong>.`;
                     });
                 }
             }
         }
     </script>
 </body>
+</html>
