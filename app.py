@@ -53,7 +53,7 @@ def setup_battle(df):
     # Sorteia os níveis dos Pokémon
     level_atk = random.randint(40, 60) # Níveis em uma faixa razoável
     # Garante que o nível do defensor fique entre 40 e 60 e a diferença seja no máximo 10
-    # level_def = random.randint(max(40, level_att - 10), min(60, level_att + 10))
+    # level_def = random.randint(max(40, level_atk - 10), min(60, level_atk + 10))
     # Aparentemente o nível do defensor não é usado no cálculo de dano, então foi comentado, mas caso venha a calhar, está aí.
 
     # Escolhe o poder do ataque (múltiplo de 10 de 40 a 120)
@@ -131,6 +131,70 @@ def setup_battle(df):
         "range_max": int(damage_max)
     }
 
+def get_challenge_formula(params, nivel_dificuldade):
+    # Gera o dicionário de fórmula e a resposta esperada baseada no nível
+    
+    # NÍVEL FÁCIL --> focar em STAB e Eficácia.
+    # Dano = (Poder * 0.5 + 10) * STAB * Eficácia
+    if nivel_dificuldade == 'facil':
+        base_calc_facil = (params['power'] * 0.5) + 10 # Cálculo base simplificado (sem stats e nível)
+        answer_facil = np.floor(base_calc_facil * params['stab_mod'] * params['type_effectiveness'])
+        
+        return {
+            "name": "FÁCIL",
+            "description": "Foque apenas nos multiplicadores de Poder, STAB e Eficácia de Tipo.",
+            "equation_tex": r"\text{Dano} = \lfloor (\frac{\text{Poder}}{2} + 10) \times \text{STAB} \times \text{Eficácia} \rfloor",
+            "values": {
+                "Poder": params['power'],
+                "STAB": params['stab_mod'],
+                "Eficácia": params['type_effectiveness']
+            },
+            "answer_for_level": int(answer_facil)
+        }
+        
+    # NÍVEL MÉDIO --> focada no dano exato sem o fator aleatório
+    elif nivel_dificuldade == 'medio':
+        
+        return {
+            "name": "MÉDIO",
+            "description": "Use a fórmula padrão Pokémon. Lembre-se de seguir a ordem das operações (PEMDAS) e arredondar o resultado final.",
+            "equation_tex": r"\text{Dano} = \lfloor \left( \left[ \left( \frac{2 \times \text{Nível}}{5} + 2 \right) \times \frac{\text{Att}}{\text{Def}} \times \frac{\text{Poder}}{50} \right] + 2 \right) \times \text{STAB} \times \text{Eficácia} \rfloor",
+            "values": {
+                "Nível": params['level'],
+                "Atk": params['atk_value'],
+                "Def": params['def_value'],
+                "Poder": params['power'],
+                "STAB": params['stab_mod'],
+                "Eficácia": params['type_effectiveness']
+            },
+            # params['damage_max'] é o dano exato com fator 1.0
+            "answer_for_level": params['damage_max']
+        }
+    
+    # NÍVEL DIFÍCIL --> resultado deve ser a faixa completa de dano (0.85 a 1.0)
+    elif nivel_dificuldade == 'dificil':
+        
+        return {
+            "name": "DIFÍCIL",
+            "description": "Calcule a Faixa de Dano. Você deve calcular o valor mínimo (Fator 0.85) e o valor máximo (Fator 1.0) e responder Min-Max.",
+            "equation_tex": r"\text{Faixa} = \lfloor \text{Base} \times \text{STAB} \times \text{Eficácia} \times \text{Aleatório} \rfloor",
+            "values": {
+                "Nível": params['level'],
+                "Atk": params['atk_value'],
+                "Def": params['def_value'],
+                "Poder": params['power'],
+                "STAB": params['stab_mod'],
+                "Eficácia": params['type_effectiveness'],
+                "Aleatório": "[0.85 \text{ a } 1.0]"
+            },
+            # A resposta deve ser a string [min-max]
+            "answer_for_level": f"[{params['range_min']} - {params['range_max']}]",
+            "range_min": params['range_min'],
+            "range_max": params['range_max']
+        }
+    
+    return {}
+
 # -------- Rotas de Navegação --------
 
 @app.route('/')
@@ -152,96 +216,26 @@ def calculo_xp_page():
 # Cria os dados da batalha e retorna para o frontend em JSON
 @app.route('/api/iniciar_calculo', methods=['POST'])
 def iniciar_calculo():
-    dados_front = request.get_json()
-    dificuldade = dados_front.get('nivel', 'medium') # Padrão é dificuldade média
+    data = request.get_json()
+    nivel_dificuldade = data.get('nivel', 'medio') # Padrão médio se não especificado
+    
     if dados_pokemon.empty:
-        return jsonify({'erro': 'Dados de Pokémon não carregados'}), 500
-
+        return jsonify({"erro": "Dados de Pokémon não carregados"})
+    
+    # Configura a batalha
     params = setup_battle(dados_pokemon)
     
-    # Nível FÁCIL --> Fórmula simplificada
-    # Dano = (Poder * 0.5 + 10) * STAB * Eficácia (ignora nível e stats)
-    if dificuldade == 'facil':
-        base_calc_easy = (params['power'] * 0.5) + 10 
-        answer_easy = np.floor(base_calc_easy * params['stab_mod'] * params['type_effectiveness'])
-        
-        formula = {
-            "name": "easy",
-            # Fórmula em LaTeX para o frontend
-            "equation_tex": r"\text{Dano} = \lfloor (\frac{\text{Poder}}{2} + 10) \times \text{STAB} \times \text{Eficácia} \rfloor",
-            "values": {
-                "Poder": params['power'],
-                "STAB": params['stab_mod'],
-                "Eficácia": params['type_effectiveness']
-            },
-            "answer_for_level": int(answer_easy)
-        }
-        
-    # Nível MÉDIO --> Fórmula completa, mas sem o fator aleatório (1.0)
-    # A resposta é params['rangemax'] (calculado com fator 1.0)
-    elif dificuldade == 'medio':
-        formula = {
-            "name": "medium",
-            # Fórmula em LaTeX para o frontend
-            "equation_tex": r"\text{Dano} = \lfloor \left( \left[ \left( \frac{2 \times \text{Nível}}{5} + 2 \right) \times \frac{\text{Atk}}{\text{Def}} \times \frac{\text{Poder}}{50} \right] + 2 \right) \times \text{STAB} \times \text{Eficácia} \rfloor",
-            "values": {
-                "Nível": params['level'],
-                "Atk": params['atk_value'],
-                "Def": params['def_value'],
-                "Poder": params['power'],
-                "STAB": params['stab_mod'],
-                "Eficácia": params['type_effectiveness']
-            },
-            "answer_for_level": params['range_max']
-        }
+    # Obtém a fórmula para a dificuldade
+    formula = get_challenge_formula(params, nivel_dificuldade)
     
-    # Nível DIFÍCIL --> Fórmula completa, deve encontrar a faixa de dano (0.85 a 1.0), não um valor exato
-    # A resposta é a faixa completa [Min, Max]
-    elif dificuldade == 'dificil':
-        formula = {
-            "name": "hard",
-            # Fórmula em LaTeX para o frontend
-            "equation_tex": r"\text{Dano} = \lfloor \text{Base} \times \text{STAB} \times \text{Eficácia} \times \text{Aleatório} \rfloor",
-            "values": {
-                "Nível": params['level'],
-                "Atk": params['atk_value'],
-                "Def": params['def_value'],
-                "Poder": params['power'],
-                "STAB": params['stab_mod'],
-                "Eficácia": params['type_effectiveness'],
-                "Aleatório": "[0.85 \text{ a } 1.0]"
-            },
-            "answer_for_level": f"[{params['range_min']} - {params['range_max']}]",
-            "range_min": params['range_min'],
-            "range_max": params['range_max']
-        }
-
-    # Combina os dados da batalha e a fórmula da dificuldade
-    response_data = {
-        "battle": {
-            "attacker": params['attacker_name'],
-            "defender": params['defender_name'],
-            "level": params['level'],
-            "attack_type": params['attack_type'],
-            "power": params['power'],
-            "atk_stat_name": params['atk_stat_name'],
-            "def_stat_name": params['def_stat_name'],
-            "atk_value": params['atk_value'],
-            "def_value": params['def_value'],
-            "stab_mod": params['stab_mod'],
-            "type_effectiveness": params['type_effectiveness'],
-            "attacker_types": " / ".join(params['attacker_types']),
-            "defender_types": " / ".join(params['defender_types']),
-        },
-        "formula": formula,
-        "base_calc_no_random": round(params['base_calc_no_random'], 2)
-    }
-
-    return jsonify(response_data)
+    return jsonify({
+        "battle": params,
+        "formula": formula
+    })
 
     
 
-# --- 4. Inicialização do Servidor ---
+# -------- Inicialização do Servidor ---------
 
 if __name__ == '__main__':
     # use_reloader False para evitar carregar o CSV duas vezes durante o desenvolvimento

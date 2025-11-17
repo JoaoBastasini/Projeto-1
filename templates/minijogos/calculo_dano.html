@@ -39,7 +39,7 @@
             <div class="info_box">
                 <div class="grade_stats">
                     <div>
-                        <p><strong>🥊 ATACANTE:</strong> <span id="attacker_name"></span> (Nível <span id="level"></span>)</p>
+                        <p><strong>⚔️ ATACANTE:</strong> <span id="attacker_name"></span> (Nível <span id="level"></span>)</p>
                         <p><strong>Tipos:</strong> <span id="attacker_types"></span></p>
                         <p class="item_stats"><strong><span id="att_stat_name"></span>:</strong> <span id="atk_value"></span></p>
                     </div>
@@ -52,18 +52,19 @@
             </div>
             
             <div class="info_box">
-                <p><strong>⚡ Ataque:</strong> <span id="attack_type"></span> (Poder <span id="power"></span>)</p>
+                <p><strong>💥 Ataque:</strong> <span id="attack_type"></span> (Poder <span id="power"></span>)</p>
                 <p><strong>⭐ STAB:</strong> x<span id="stab_mod"></span></p>
                 <p><strong>📈 Eficácia de Tipo:</strong> x<span id="type_effectiveness"></span></p>
             </div>
-
+            
             <div class="formula_LaTex">
                 <h3>Fórmula: <span id="level_name_formula"></span></h3>
+                <p id="level_description" style="font-style: italic; color: #555;"></p>
                 <div id="formula_equation" style="font-size: 1.5em; margin: 10px;"></div>
-                <p id="formula_values"></p>
-                <p id="formula_warning" style="color: red;"></p>
+                <p id="formula_values" style="margin-top: 10px;"></p>
+                <p id="formula_warning" style="color: #d9534f; font-weight: bold;"></p>
             </div>
-            
+
             <div class="grupo_entrada">
                 <label for="user_answer">Sua Resposta (Dano ou Faixa [Min-Max]):</label><br>
                 <input type="text" id="user_answer" placeholder="Ex: 50 ou 42-50">
@@ -113,6 +114,7 @@
 
                 document.getElementById('level_name').textContent = data.formula.name;
                 document.getElementById('level_name_formula').textContent = data.formula.name;
+                document.getElementById('level_description').textContent = data.formula.description;
                 
                 document.getElementById('attacker_name').textContent = data.battle.attacker;
                 document.getElementById('defender_name').textContent = data.battle.defender;
@@ -195,7 +197,7 @@
                 if (currentLevel === 'medio' || currentLevel === 'dificil') {
                     fetch('/api/iniciar_calculo', { 
                         method: 'POST',
-                        headers: {'Content_Type': 'application/json'},
+                        headers: {'Content-Type': 'application/json'},
                         body: JSON.stringify({ nivel: currentLevel }) 
                     })
                     .then(r => r.json())
