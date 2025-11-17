@@ -153,6 +153,10 @@ h1{
     color: #721c24; 
 }
 
+.botoes_nivel { /* Container dos botões de nível */
+    text-align: center;
+    margin-bottom: 20px;
+}
 
 .botoes_nivel button { /* Níveis dos minijogos */
     margin: 5px;
