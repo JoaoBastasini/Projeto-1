@@ -8,7 +8,7 @@ from type_data import TYPE_CHART_OFFENSIVE, TYPE_CHART_DEFENSIVE
 '''
 Para rodar o servidor Flask:
 1. Certifique-se de que você tem o Flask e o Pandas instalados: pip install Flask pandas
-2. Execute este arquivo: python app.py
+2. Execute este arquivo: python3 app.py
 3. Acesse no navegador: http://127.0.0.1:5000/
 '''
 
@@ -157,8 +157,8 @@ def get_challenge_formula(params, nivel_dificuldade):
         
         return {
             "name": "MÉDIO",
-            "description": "Use a fórmula padrão Pokémon. Lembre-se de seguir a ordem das operações (PEMDAS) e arredondar o resultado final.",
-            "equation_tex": r"\text{Dano} = \lfloor \left( \left[ \left( \frac{2 \times \text{Nível}}{5} + 2 \right) \times \frac{\text{Att}}{\text{Def}} \times \frac{\text{Poder}}{50} \right] + 2 \right) \times \text{STAB} \times \text{Eficácia} \rfloor",
+            "description": "Use a fórmula padrão Pokémon. Lembre-se de seguir a ordem das operações.",
+            "equation_tex": r"\text{Dano} = \lfloor \left( \left[ \left( \frac{2 \times \text{Nível}}{5} + 2 \right) \times \frac{\text{Atk}}{\text{Def}} \times \frac{\text{Poder}}{50} \right] + 2 \right) \times \text{STAB} \times \text{Eficácia} \rfloor",
             "values": {
                 "Nível": params['level'],
                 "Atk": params['atk_value'],

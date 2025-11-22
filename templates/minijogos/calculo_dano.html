@@ -35,7 +35,8 @@
         
         <div id="challenge_area" style="display: none;">
             <hr>
-            <h2 id="challenge_title">Desafio de Cálculo - Nível: <span id="level_name"></span></h2>
+            <!-- span permite que as informações sejam colocadas depois que os dados forem carregados -->
+            <h2 id="challenge_title">Desafio de Dano - Nível: <span id="level_name"></span></h2>
             
             <div class="info_box">
                 <div class="grade_stats">
@@ -68,7 +69,7 @@
 
             <div class="grupo_entrada">
                 <label for="user_answer">Sua Resposta (Dano ou Faixa [Min-Max]):</label><br>
-                <input type="text" id="user_answer" placeholder="Ex: 50 ou 42-50">
+                <input type="text" id="user_answer" style="margin-top: 20px;" placeholder="Ex: 50 ou 42-50">
                 <button class="botao_minijogo" onclick="checkAnswer()">Confirmar</button>
             </div>
             
@@ -144,7 +145,7 @@
                 document.getElementById('type_effectiveness').textContent = data.battle.type_effectiveness;
 
 
-                // 6. Renderiza a fórmula LaTeX usando KaTeX
+                // Renderiza a fórmula com KaTeX
                 const formulaElement = document.getElementById('formula_equation');
                 katex.render(data.formula.equation_tex, formulaElement, {
                     throwOnError: false // Não quebra se houver erro de sintaxe LaTeX
@@ -160,7 +161,7 @@
 
                 // 8. Define avisos específicos de arredondamento ou faixa de dano
                 if (nivel === 'medio') {
-                    document.getElementById('formula_warning').innerHTML = 'Lembre-se: Arredonde para baixo o valor final! (Função $\\lfloor x \\rfloor$)';
+                    document.getElementById('formula_warning').innerHTML = 'Lembre-se: Arredonde para baixo o valor final!';
                 } else if (nivel === 'dificil') {
                      document.getElementById('formula_warning').innerHTML = 'Sua resposta deve ser a FAIXA DE DANO (Ex: Min-Max). Fator Aleatório: 0.85 a 1.0.';
                 }
