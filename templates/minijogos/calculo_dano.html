@@ -161,7 +161,7 @@
                 // Coloca o label adequado
                 const labelAnswer = document.getElementById('label_answer');
                 if (nivel === 'dificil') {
-                    labelAnswer.textContent = 'Sua Resposta - Faixa de Dano Min-Max:';
+                    labelAnswer.textContent = 'Sua Resposta -> Faixa de Dano Min-Max:';
                 } else {
                     labelAnswer.textContent = 'Sua Resposta (Dano):';
                 }
@@ -255,7 +255,7 @@
                     .then(r => r.json())
                     .then(data => {
                         // Exibe o valor do cálculo Base (antes de aplicar STAB/Eficácia/Aleatório)
-                        resultMessage.innerHTML += `<br>Dica: O valor base (antes de STAB/Eficácia) é aprox.: <strong>${data.base_calc_no_random}</strong>.`;
+                        resultMessage.innerHTML += `<br>Dica: O valor base (antes de STAB/Eficácia) é aprox.: <strong>${data.battle.base_calc_no_random.toFixed(2)}</strong>`;
                     });
                 }
             }
