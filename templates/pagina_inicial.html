@@ -9,6 +9,7 @@
     Executa Python/Flask antes de enviar o HTML para o navegador
     Flask usa url_for para gerar URLs para arquivos estáticos
     Garante que o caminho está correto independentemente de onde o app está rodando
+    Não é necessário alterar o HTML se a estrutura de pastas mudar
     -->   
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>POKÉLEARN</title>
