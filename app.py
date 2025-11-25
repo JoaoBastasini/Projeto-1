@@ -8,7 +8,7 @@ from type_data import TYPE_CHART_OFFENSIVE, TYPE_CHART_DEFENSIVE
 '''
 Para rodar o servidor Flask:
 1. Certifique-se de que você tem o Flask e o Pandas instalados: pip install Flask pandas
-2. Execute este arquivo: python3 app.py
+2. Execute este arquivo: python app.py
 3. Acesse no navegador: http://127.0.0.1:5000/
 '''
 
