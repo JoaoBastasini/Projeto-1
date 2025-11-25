@@ -43,7 +43,7 @@
                     <div>
                         <p><strong>⚔️ ATACANTE:</strong> <span id="attacker_name"></span> (Nível <span id="level"></span>)</p>
                         <p><strong>Tipos:</strong> <span id="attacker_types"></span></p>
-                        <p class="item_stats"><strong><span id="att_stat_name"></span>:</strong> <span id="att_value"></span></p>
+                        <p class="item_stats"><strong><span id="atk_stat_name"></span>:</strong> <span id="atk_value"></span></p>
                     </div>
                     <div>
                         <p><strong>🛡️ DEFENSOR:</strong> <span id="defender_name"></span></p>
@@ -88,55 +88,52 @@
         let correctRangeMax = null; // Máximo da faixa de dano (para Difícil)
 
 
-        // =======================================================
-        // FUNÇÃO: startChallenge(nivel)
         // Inicia um novo desafio, buscando os dados no backend (Flask).
-        // =======================================================
         function startChallenge(nivel) {
             currentLevel = nivel;
             
-            // 1. Resetar a interface e mostrar a área do desafio
+            // Reseta a interface
             document.getElementById('challenge_area').style.display = 'block';
             document.getElementById('result_message').style.display = 'none';
             document.getElementById('user_answer').value = '';
             document.getElementById('new_challenge_btn').style.display = 'none';
             document.getElementById('formula_warning').innerHTML = '';
             
-            // 2. Chamada AJAX (Fetch API) para o endpoint do Flask
+            // Fetch API
             fetch('/api/iniciar_calculo', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                // Envia o nível de dificuldade escolhido
+                // Nível de dificuldade
                 body: JSON.stringify({ nivel: nivel })
             })
-            // 3. Processa a resposta JSON do Flask
+            // Processa a resposta JSON do Flask
             .then(response => response.json())
             .then(data => {
-                if (data.erro) { // Verifica se há erro no carregamento dos dados
+                if (data.erro) { // Verifica erro nos dados
                     alert(data.erro);
                     return;
                 }
 
-                // 4. Armazena as respostas corretas nas variáveis globais
+                // Armazena as respostas nas variáveis globais
                 correctAnswer = data.formula.answer_for_level;
                 correctRangeMin = data.formula.range_min;
                 correctRangeMax = data.formula.range_max;
 
-                // 5. Preenche os campos do HTML com os dados da batalha
+                // Preenche os campos do HTML (span)
                 document.getElementById('level_name').textContent = data.formula.name;
                 document.getElementById('level_name_formula').textContent = data.formula.name;
-                document.getElementById('level_description').textContent = data.formula.description; // Nova descrição do nível
+                document.getElementById('level_description').textContent = data.formula.description;
                 
                 document.getElementById('attacker_name').textContent = data.battle.attacker;
                 document.getElementById('defender_name').textContent = data.battle.defender;
                 document.getElementById('level').textContent = data.battle.level;
-                // ... preenchimento dos demais campos (tipos, stats, poder, stab, eficácia) ...
+
                 document.getElementById('attacker_types').textContent = data.battle.attacker_types;
                 document.getElementById('defender_types').textContent = data.battle.defender_types;
-                document.getElementById('att_stat_name').textContent = data.battle.att_stat_name;
-                document.getElementById('att_value').textContent = data.battle.att_value;
+                document.getElementById('att_stat_name').textContent = data.battle.atk_stat_name;
+                document.getElementById('att_value').textContent = data.battle.atk_value;
                 document.getElementById('def_stat_name').textContent = data.battle.def_stat_name;
                 document.getElementById('def_value').textContent = data.battle.def_value;
                 document.getElementById('attack_type').textContent = data.battle.attack_type;
@@ -152,18 +149,18 @@
                 });
 
 
-                // 7. Preenche os valores numéricos a serem substituídos na fórmula
+                // Preenche os valores da fórmula
                 let valuesHtml = 'Valores a Substituir: ';
                 const values = data.formula.values;
                 // Mapeia o dicionário de valores para strings formatadas (Ex: 'Nível = 50 | Poder = 80')
                 valuesHtml += Object.keys(values).map(key => `<strong>${key}</strong> = ${values[key]}`).join(' | ');
                 document.getElementById('formula_values').innerHTML = valuesHtml;
 
-                // 8. Define avisos específicos de arredondamento ou faixa de dano
+                // Avisos
                 if (nivel === 'medio') {
                     document.getElementById('formula_warning').innerHTML = 'Lembre-se: Arredonde para baixo o valor final!';
                 } else if (nivel === 'dificil') {
-                     document.getElementById('formula_warning').innerHTML = 'Sua resposta deve ser a FAIXA DE DANO (Ex: Min-Max). Fator Aleatório: 0.85 a 1.0.';
+                     document.getElementById('formula_warning').innerHTML = 'Sua resposta deve ser a faixa de dano (Ex: 10-15) com Fator Aleatório: 0.85 a 1.0.';
                 }
 
             })
@@ -174,10 +171,8 @@
         }
 
 
-        // =======================================================
-        // FUNÇÃO: checkAnswer()
-        // Verifica a resposta do usuário contra a resposta correta.
-        // =======================================================
+
+        // Verifica a resposta
         function checkAnswer() {
             const userAnswer = document.getElementById('user_answer').value.trim();
             const resultMessage = document.getElementById('result_message');
@@ -185,20 +180,22 @@
             
             let isCorrect = false;
 
-            // Lógica para Nível DIFÍCIL (espera formato Min-Max)
+            // Nível difícil
             if (currentLevel === 'dificil') {
-                // Divide a string do usuário em dois números (ex: "42-50" -> ["42", "50"])
-                const parts = userAnswer.split('-').map(p => p.trim());
+                // Divide a string do usuário em dois números (ex: "10-15" -> ["10", "15"])
+                // Separa uma string em array de strings (split) e tira espaços em branco (trim)
+                // .map cria um novo array aplicando a função passada (trim) em cada elemento
+                const parts = userAnswer.split('-').map(p => p.trim()); 
                 if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-                    const userMin = parseInt(parts[0]);
+                    const userMin = parseInt(parts[0]); // string --> inteiro
                     const userMax = parseInt(parts[1]);
-                    // Compara se a faixa inserida é igual à faixa correta
+                    // Compara a faixa inserida e a faixa correta
                     if (userMin === correctRangeMin && userMax === correctRangeMax) {
                         isCorrect = true;
                     }
                 }
             } 
-            // Lógica para Nível FÁCIL e MÉDIO (espera um único número)
+            // Nível fácil e médio
             else {
                 const userNumber = parseInt(userAnswer);
                 // Compara se o número inserido (inteiro) é igual à resposta correta
@@ -207,21 +204,22 @@
                 }
             }
             
-            // 1. Exibir resultado e botão de novo desafio
+            // Mostra resultado e botão de novo desafio
             resultMessage.style.display = 'block';
             newChallengeBtn.style.display = 'block';
 
-            // 2. Aplicar estilos e exibir mensagem
+            // Mensagem de resultado
             if (isCorrect) {
-                resultMessage.className = 'resultado_box correto'; // Aplica classe de sucesso (verde)
+                resultMessage.className = 'resultado_box correto'; // Box de resultado + correto
                 resultMessage.innerHTML = `✅ Correto! O dano final é: <strong>${correctAnswer}</strong>.`;
             } else {
-                resultMessage.className = 'resultado_box incorreto'; // Aplica classe de erro (vermelho)
+                resultMessage.className = 'resultado_box incorreto'; // Box de resultado + incorreto
                 // Formata a resposta correta para ser exibida
-                let correctDisplay = currentLevel === 'dificil' ? `[${correctRangeMin} - ${correctRangeMax}]` : correctAnswer;
+                // If ternário: se nível difícil, mostra faixa; senão, mostra resposta exata
+                let correctDisplay = (currentLevel === 'dificil') ? `[${correctRangeMin} - ${correctRangeMax}]` : correctAnswer;
                 resultMessage.innerHTML = `❌ Incorreto! A resposta correta era: <strong>${correctDisplay}</strong>.`;
                 
-                // Opção para dar uma dica extra nos níveis Médio/Difícil
+                // Dica nos níveis Médio/Difícil --> Mostra o valor base (sem stab/eficácia/aleatório)
                 if (currentLevel === 'medio' || currentLevel === 'dificil') {
                     // Chamada separada para buscar o valor base (após a falha), se necessário
                     fetch('/api/iniciar_calculo', { 
