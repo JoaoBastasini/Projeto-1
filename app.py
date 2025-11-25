@@ -144,11 +144,6 @@ def get_challenge_formula(params, nivel_dificuldade):
             "name": "FÁCIL",
             "description": "Foque apenas nos multiplicadores de Poder, STAB e Eficácia de Tipo.",
             "equation_tex": r"\text{Dano} = \lfloor (\frac{\text{Poder}}{2} + 10) \times \text{STAB} \times \text{Eficácia} \rfloor",
-            "values": {
-                "Poder": params['power'],
-                "STAB": params['stab_mod'],
-                "Eficácia": params['type_effectiveness']
-            },
             "answer_for_level": int(answer_facil)
         }
         
@@ -159,14 +154,6 @@ def get_challenge_formula(params, nivel_dificuldade):
             "name": "MÉDIO",
             "description": "Use a fórmula padrão Pokémon. Lembre-se de seguir a ordem das operações.",
             "equation_tex": r"\text{Dano} = \lfloor \left( \left[ \left( \frac{2 \times \text{Nível}}{5} + 2 \right) \times \frac{\text{Atk}}{\text{Def}} \times \frac{\text{Poder}}{50} \right] + 2 \right) \times \text{STAB} \times \text{Eficácia} \rfloor",
-            "values": {
-                "Nível": params['level'],
-                "Atk": params['atk_value'],
-                "Def": params['def_value'],
-                "Poder": params['power'],
-                "STAB": params['stab_mod'],
-                "Eficácia": params['type_effectiveness']
-            },
             # params['damage_max'] é o dano exato com fator 1.0
             "answer_for_level": params['range_max']
         }
@@ -178,15 +165,6 @@ def get_challenge_formula(params, nivel_dificuldade):
             "name": "DIFÍCIL",
             "description": "Calcule a Faixa de Dano. Você deve calcular o valor mínimo (Fator 0.85) e o valor máximo (Fator 1.0) e responder Min-Max.",
             "equation_tex": r"\text{Faixa} = \lfloor \text{Base} \times \text{STAB} \times \text{Eficácia} \times \text{Aleatório} \rfloor",
-            "values": {
-                "Nível": params['level'],
-                "Atk": params['atk_value'],
-                "Def": params['def_value'],
-                "Poder": params['power'],
-                "STAB": params['stab_mod'],
-                "Eficácia": params['type_effectiveness'],
-                "Aleatório": "[0.85 \text{ a } 1.0]"
-            },
             # A resposta deve ser a string [min-max]
             "answer_for_level": f"[{params['range_min']} - {params['range_max']}]",
             "range_min": params['range_min'],

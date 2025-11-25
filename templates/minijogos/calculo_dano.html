@@ -63,8 +63,7 @@
                 <h3>Fórmula: <span id="level_name_formula"></span></h3>
                 <p id="level_description" style="font-style: italic; color: #555;"></p>
                 <div id="formula_equation" style="font-size: 1.5em; margin: 10px;"></div>
-                <p id="formula_values" style="margin-top: 10px;"></p>
-                <p id="formula_warning" style="color: #d9534f; font-weight: bold;"></p>
+                <p id="formula_warning" style="color: #ad4e4a; font-weight: bold;"></p>
             </div>
 
             <div class="grupo_entrada">
@@ -148,7 +147,6 @@
                 document.getElementById('attacker_name').textContent = capitalize(data.battle.attacker_name);
                 document.getElementById('defender_name').textContent = capitalize(data.battle.defender_name);
                 document.getElementById('level').textContent = data.battle.level;
-
                 document.getElementById('attacker_types').textContent = formatTypes(data.battle.attacker_types.join(','));
                 document.getElementById('defender_types').textContent = formatTypes(data.battle.defender_types.join(','));
                 document.getElementById('atk_stat_name').textContent = data.battle.atk_stat_name;
@@ -167,17 +165,9 @@
                     throwOnError: false // Não quebra se houver erro de sintaxe LaTeX
                 });
 
-
-                // Preenche os valores da fórmula
-                let valuesHtml = 'Valores a Substituir: ';
-                const values = data.formula.values;
-                // Mapeia o dicionário de valores para strings formatadas (Ex: 'Nível = 50 | Poder = 80')
-                valuesHtml += Object.keys(values).map(key => `<strong>${key}</strong> = ${values[key]}`).join(' | ');
-                document.getElementById('formula_values').innerHTML = valuesHtml;
-
                 // Avisos
                 if (nivel === 'medio') {
-                    document.getElementById('formula_warning').innerHTML = 'Lembre-se: Arredonde para baixo o valor final!';
+                    document.getElementById('formula_warning').innerHTML = 'Arredonde o valor final para baixo!';
                 } else if (nivel === 'dificil') {
                      document.getElementById('formula_warning').innerHTML = 'Sua resposta deve ser a faixa de dano (Ex: 10-15) com Fator Aleatório: 0.85 a 1.0.';
                 }
