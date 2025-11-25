@@ -67,8 +67,8 @@
             </div>
 
             <div class="grupo_entrada">
-                <label for="user_answer">Sua Resposta (Dano ou Faixa [Min-Max]):</label><br>
-                <input type="text" id="user_answer" style="margin-top: 20px;" placeholder="Ex: 50 ou 42-50">
+                <label for="user_answer" id="label_answer" >Sua Resposta (Dano ou Faixa [Min-Max]):</label><br>
+                <input type="text" id="user_answer" style="margin-top: 20px;" placeholder="Digite aqui">
                 <button class="botao_minijogo" onclick="checkAnswer()">Confirmar</button>
             </div>
             
@@ -157,6 +157,22 @@
                 document.getElementById('power').textContent = data.battle.power;
                 document.getElementById('stab_mod').textContent = data.battle.stab_mod;
                 document.getElementById('type_effectiveness').textContent = data.battle.type_effectiveness;
+
+                // Coloca o label adequado
+                const labelAnswer = document.getElementById('label_answer');
+                if (nivel === 'dificil') {
+                    labelAnswer.textContent = 'Sua Resposta (Faixa de Dano [Min-Max]):';
+                } else {
+                    labelAnswer.textContent = 'Sua Resposta (Dano):';
+                }
+
+                // Coloca o placeholder adequado no input
+                const inputElement = document.getElementById('user_answer');
+                if (nivel === 'dificil') {
+                    inputElement.placeholder = 'Ex: 42-50';
+                } else {
+                    inputElement.placeholder = 'Ex: 50';
+                }
 
 
                 // Renderiza a fórmula com KaTeX
