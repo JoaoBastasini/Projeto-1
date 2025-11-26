@@ -164,7 +164,7 @@ def get_challenge_formula(params, nivel_dificuldade):
         return {
             "name": "DIFÍCIL",
             "description": "Calcule a Faixa de Dano. Você deve calcular o valor mínimo (Fator 0.85) e o valor máximo (Fator 1.0) e responder Min-Max.",
-            "equation_tex": r"\text{Faixa} = \lfloor \text{Base} \times \text{STAB} \times \text{Eficácia} \times \text{Aleatório} \rfloor",
+            "equation_tex": r"\text{Dano} = \lfloor \left( \left[ \left( \frac{2 \times \text{Nível}}{5} + 2 \right) \times \frac{\text{Atk}}{\text{Def}} \times \frac{\text{Poder}}{50} \right] + 2 \right) \times \text{STAB} \times \text{Eficácia} \times \text{Aleatório} \rfloor",
             # A resposta deve ser a string [min-max]
             "answer_for_level": f"[{params['range_min']} - {params['range_max']}]",
             "range_min": params['range_min'],
